@@ -29,7 +29,7 @@ def get_assets():
             if asset["assetType"]["name"] == "Shirt" or asset["assetType"]["name"] == "Pants":
                 asset_listbox.insert(tk.END, f"{asset['name']} ({asset['id']})")
     else:
-        status_label.config(text="Invalid group ID")
+        status_label.config(text=f"Invalid group ID: {response.text}")
 
 # Update asset descriptions
 def update_assets():
@@ -51,6 +51,7 @@ def update_assets():
         edit_url = f"https://www.roblox.com/catalog/{asset_id}/update"
         edit_response = requests.post(edit_url, headers=headers, data=payload)
         status_label.config(text=f"Updated {asset_data['Name']} ({asset_id}) with description {payload['description']}")
+        print(edit_response.text)
 
 # Set up GUI
 root = tk.Tk()
