@@ -5,16 +5,18 @@ This Python program allows you to update the descriptions of all classic clothin
 
 ## Requirements
 
-Python 3.x
-Requests library
-Tkinter library
+## Python 3.x
+## Requests library
+## Tkinter library
 
 
 ## Usage
 
 Clone or download the repository to your local machine.
 Install the Requests and Tkinter libraries if you haven't already. You can do this using pip:
+
 pip install requests
+
 pip install tkinter
 
 Run the program using Python:
