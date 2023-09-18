@@ -3,7 +3,7 @@ import json
 import tkinter as tk
 
 # Set up API endpoint
-url = "https://groups.roblox.com/v1/groups/{}/assets?assetType=1&sortOrder=Desc&limit=100"
+url = "https://groups.roblox.com/v1/groups/{}/assets?assetType=1&sortOrder=Desc&limit=100&createdAfter=0"
 
 # Set up authentication
 def authenticate():
@@ -25,7 +25,7 @@ def get_assets():
     response = requests.get(url.format(group_id), headers=headers)
     if response.status_code == 200:
         data = json.loads(response.text)
-        for asset in data["data"]:
+        for asset in sorted(data["data"], key=lambda x: x["created"]):
             if asset["assetType"]["name"] == "Shirt" or asset["assetType"]["name"] == "Pants":
                 asset_listbox.insert(tk.END, f"{asset['name']} ({asset['id']})")
     else:
@@ -39,10 +39,18 @@ def update_assets():
         return
     for index in asset_listbox.curselection():
         asset_id = asset_listbox.get(index).split("(")[1].split(")")[0]
-        payload = {"description": description_entry.get()}
+        asset_url = f"https://api.roblox.com/marketplace/productinfo?assetId={asset_id}"
+        asset_response = requests.get(asset_url)
+        asset_data = json.loads(asset_response.text)
+        if asset_data["AssetTypeId"] == 11:
+            payload = {"description": "shirt"}
+        elif asset_data["AssetTypeId"] == 12:
+            payload = {"description": "pants"}
+        else:
+            continue
         edit_url = f"https://www.roblox.com/catalog/{asset_id}/update"
         edit_response = requests.post(edit_url, headers=headers, data=payload)
-        status_label.config(text=f"Updated {asset_id} with description {payload['description']}")
+        status_label.config(text=f"Updated {asset_data['Name']} ({asset_id}) with description {payload['description']}")
 
 # Set up GUI
 root = tk.Tk()
